@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline Inspection Capture Platform</title>
+  <meta name="description" content="A monochrome field-operations narrative following one inspection from offline capture through local persistence, retry, reconciliation, recovery, and audit.">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+  <style>
+    :root {
+      --paper: #ffffff;
+      --panel: #f3f3f3;
+      --panel-strong: #e6e6e6;
+      --line: #cbcbcb;
+      --line-strong: #8b8b8b;
+      --ink-soft: #676767;
+      --ink: #222222;
+      --ink-strong: #060606;
+      --black: #000000;
+      --shadow: rgba(0, 0, 0, 0.08);
+      --max: 1180px;
+      --rail: 104px;
+      --radius: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "IBM Plex Sans", sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, #ffffff 0%, #fafafa 22%, #f1f1f1 100%);
+      line-height: 1.7;
+    }
+
+    ::selection {
+      background: #d9d9d9;
+      color: #000000;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .page {
+      width: min(calc(100% - 2rem), var(--max));
+      margin: 0 auto;
+      padding: 2.2rem 0 5rem;
+    }
+
+    .masthead {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 32px;
+      padding: 2.5rem;
+      background:
+        radial-gradient(circle at top right, #f7f7f7 0%, #ededed 24%, transparent 25%),
+        linear-gradient(180deg, #ffffff 0%, #f7f7f7 100%);
+      box-shadow: 0 24px 60px var(--shadow);
+    }
+
+    .masthead::after {
+      content: "";
+      position: absolute;
+      inset: 18px;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-radius: 24px;
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      margin: 0 0 1rem;
+      font-size: 0.8rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      line-height: 1.1;
+      color: var(--ink-strong);
+    }
+
+    h1 {
+      max-width: 10ch;
+      font-size: clamp(2.9rem, 6vw, 5.4rem);
+      letter-spacing: -0.05em;
+      text-transform: uppercase;
+    }
+
+    .lede {
+      max-width: 64ch;
+      margin: 1.5rem 0 0;
+      font-size: 1.06rem;
+      color: var(--ink);
+    }
+
+    .masthead-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.8fr) minmax(280px, 0.92fr);
+      gap: 1.75rem;
+      margin-top: 2rem;
+    }
+
+    .summary-card,
+    .field-note,
+    .code-card,
+    .diagram,
+    .checkpoint-panel {
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.84);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 32px rgba(0, 0, 0, 0.04);
+    }
+
+    .summary-card {
+      padding: 1.4rem;
+      display: grid;
+      gap: 0.95rem;
+      align-content: start;
+    }
+
+    .summary-card dl {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.7rem 1rem;
+      margin: 0;
+    }
+
+    .summary-card dt {
+      color: var(--ink-soft);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 0.75rem;
+    }
+
+    .summary-card dd {
+      margin: 0;
+      font-weight: 600;
+      text-align: right;
+      color: var(--ink-strong);
+    }
+
+    .summary-card p {
+      margin: 0;
+      font-size: 0.97rem;
+      color: var(--ink);
+    }
+
+    .opening-note {
+      margin-top: 1.4rem;
+      padding: 1.1rem 1.2rem;
+      border-left: 4px solid var(--black);
+      background: rgba(0, 0, 0, 0.03);
+      color: var(--ink-strong);
+      font-weight: 500;
+    }
+
+    .timeline {
+      position: relative;
+      margin-top: 2.8rem;
+      padding-left: calc(var(--rail) + 1rem);
+    }
+
+    .timeline::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: calc(var(--rail) / 2);
+      width: 1px;
+      background:
+        linear-gradient(180deg, #222222 0%, #8d8d8d 18%, #c9c9c9 60%, transparent 100%);
+    }
+
+    .checkpoint {
+      position: relative;
+      padding: 0 0 3rem;
+    }
+
+    .checkpoint:last-of-type {
+      padding-bottom: 0;
+    }
+
+    .badge {
+      position: absolute;
+      left: calc(var(--rail) * -1);
+      top: 0.55rem;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: 1px solid var(--line-strong);
+      background:
+        linear-gradient(180deg, #ffffff 0%, #ececec 100%);
+      display: grid;
+      place-items: center;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.9rem;
+      color: var(--ink-strong);
+      box-shadow: 0 14px 24px rgba(0, 0, 0, 0.06);
+    }
+
+    .checkpoint-panel {
+      padding: 2rem 2rem 2.25rem;
+    }
+
+    .checkpoint-panel h2 {
+      font-size: clamp(1.65rem, 3.2vw, 2.45rem);
+      letter-spacing: -0.04em;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+    }
+
+    .checkpoint-panel p {
+      margin: 0 0 1rem;
+      max-width: 72ch;
+    }
+
+    .checkpoint-panel p:last-child {
+      margin-bottom: 0;
+    }
+
+    .support-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 1.25rem;
+      margin-top: 1.35rem;
+    }
+
+    .field-note,
+    .code-card {
+      padding: 1.2rem 1.25rem;
+    }
+
+    .field-note h3,
+    .code-card h3 {
+      font-size: 0.92rem;
+      margin-bottom: 0.85rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .field-note p,
+    .field-note ul,
+    .code-card p {
+      margin: 0;
+      font-size: 0.95rem;
+      color: var(--ink);
+    }
+
+    .field-note ul {
+      padding-left: 1.1rem;
+    }
+
+    .field-note li + li {
+      margin-top: 0.42rem;
+    }
+
+    pre {
+      margin: 0;
+      overflow-x: auto;
+      padding: 1rem;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, #f9f9f9 0%, #ededed 100%);
+      color: #111111;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      font-family: "IBM Plex Mono", monospace;
+    }
+
+    code {
+      font-family: "IBM Plex Mono", monospace;
+    }
+
+    .diagram {
+      margin-top: 1.35rem;
+      padding: 1.2rem;
+      overflow: hidden;
+    }
+
+    .diagram figcaption {
+      margin-top: 0.8rem;
+      color: var(--ink-soft);
+      font-size: 0.92rem;
+    }
+
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .closing-strip {
+      margin-top: 2.2rem;
+      padding: 1.25rem 1.3rem;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: linear-gradient(180deg, #fbfbfb 0%, #efefef 100%);
+      font-weight: 500;
+      color: var(--ink-strong);
+    }
+
+    .footer-note {
+      margin-top: 2.8rem;
+      padding: 1.6rem 1.8rem 0;
+      border-top: 1px solid var(--line);
+      color: var(--ink-soft);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 980px) {
+      .masthead-grid,
+      .support-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      :root {
+        --rail: 74px;
+      }
+
+      .page {
+        width: min(calc(100% - 1rem), var(--max));
+        padding-top: 0.8rem;
+      }
+
+      .masthead {
+        padding: 1.35rem;
+        border-radius: 24px;
+      }
+
+      .timeline {
+        padding-left: calc(var(--rail) + 0.35rem);
+      }
+
+      .badge {
+        width: 54px;
+        height: 54px;
+        left: calc(var(--rail) * -1 + 8px);
+      }
+
+      .checkpoint-panel {
+        padding: 1.3rem 1.15rem 1.45rem;
+      }
+
+      pre {
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="masthead">
+      <p class="eyebrow">Field Operations Narrative / Offline Capture / Black and White</p>
+      <h1>Offline Inspection Capture Platform</h1>
+      <p class="lede">At 06:12, before the yard office is open and before the nearest tower will hold a data session, an inspector steps out of a pickup with a low-spec Android phone, a charged spare battery, and a checklist that cannot wait for signal. This platform is built for that exact hour: the point where required fields, photo evidence, timestamps, and operator intent have to be recorded under gloves, glare, dust, and interrupted power, then carried forward intact until the network returns and the office can reconcile what actually happened on site.</p>
+      <div class="masthead-grid">
+        <div>
+          <p>The story below follows one monthly inspection on a freight-yard fire pump enclosure at the north fence. The cell link fails before the gate closes behind the vehicle. The operator still has to capture gauge readings, leak status, panel condition, asset serials, and photo proof without dropping steps or inventing values from memory later. The system does not treat offline as a feature badge. It treats it as the normal operating condition and designs every state around eventual proof.</p>
+          <p class="opening-note">No part of the workflow assumes that the cloud is present when the evidence is created. The record has to exist locally, survive interruption, and only then earn the right to synchronize.</p>
+        </div>
+        <aside class="summary-card" aria-label="Inspection context">
+          <dl>
+            <dt>Inspection</dt>
+            <dd>Monthly fire pump enclosure</dd>
+            <dt>Device</dt>
+            <dd>Low-spec Android handset</dd>
+            <dt>Capture load</dt>
+            <dd>17 required fields, 4 photos</dd>
+            <dt>Field state</dt>
+            <dd>No reliable signal at asset edge</dd>
+            <dt>Core storage</dt>
+            <dd>Local database plus file cache</dd>
+            <dt>Reconciliation</dt>
+            <dd>Queued upload, merge, acknowledgment</dd>
+          </dl>
+          <p>Interviews with inspectors and supervisors shaped the details: predefined checklists, mandatory answers, timestamps, in-app camera capture, queued uploads, retry logic, and conflict rules that can survive real field timing instead of office assumptions.</p>
+        </aside>
+      </div>
+    </header>
+
+    <main class="timeline">
+      <section class="checkpoint">
+        <div class="badge">01</div>
+        <div class="checkpoint-panel">
+          <h2>Checkpoint 01: Signal Drops Before the First Reading</h2>
+          <p>The day starts with a condition supervisors already know but spreadsheets usually hide: the outer fence line is a dead spot. The operator, Saira, parks beside the pump enclosure where corrugated steel, stacked trailers, and distance from the office combine to kill the data link. If the platform were still built around a live web form or delayed note entry, this would be the point where work became approximation. A reading scribbled on paper in the wind becomes a number typed later from memory. A missing serial plate photo turns into a call-back. A skipped mandatory field is only discovered after the truck is already back on the road.</p>
+          <p>This platform starts by refusing those shortcuts. On launch, the app opens directly into the assigned checklist instead of a heavy dashboard. That behavior came out of low-spec device pilots where startup time mattered more than ornamental navigation. The checklist is local. The last synced assignment package, asset metadata, and field definitions are already on the device before the truck leaves coverage. Labels are short because they have to be legible in bright light. Required fields are explicit because field operators do not have time to guess which blanks will block handover later. The camera path is in-app because context switching to the device gallery caused lost photos and mismatched records in earlier trials.</p>
+          <p>The field constraint is not just missing connectivity. It is also battery pressure, heat, limited memory, and the simple fact that one hand may be holding a flashlight or a latch while the other drives the form. The app therefore assumes small, durable actions: one answer committed at a time, one image tied to one checklist slot, one state transition visible on screen. The goal is not a beautiful session while signal is absent. The goal is to leave the site with a record that can be defended later, even if the device restarts twice before lunch.</p>
+          <div class="support-grid">
+            <aside class="field-note">
+              <h3>Field Conditions Observed in Pilots</h3>
+              <ul>
+                <li>Operators often enter the site with less than twenty percent battery.</li>
+                <li>Bright outdoor light forces high contrast, large tap targets, and sparse chrome.</li>
+                <li>Memory pressure on older phones punishes camera-heavy flows and long cold starts.</li>
+                <li>Supervisors care less about elegance than about knowing whether a missing answer was never entered or simply never synchronized.</li>
+              </ul>
+            </aside>
+            <aside class="field-note">
+              <h3>What Must Be True Before Any Sync Exists</h3>
+              <p>The checklist definition, required field map, timestamp policy, and photo slot rules are already resident on the handset. The operator can complete the job with zero round trips to a server. That is the baseline, not the fallback.</p>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="checkpoint">
+        <div class="badge">02</div>
+        <div class="checkpoint-panel">
+          <h2>Checkpoint 02: Capture Starts at the Asset, Not at the Office</h2>
+          <p>Saira taps into the north-yard fire pump checklist and the form opens at the first unresolved item. The sequence is deliberate: verify asset ID plate, record enclosure seal status, read suction and discharge gauges, inspect the spill tray, test the panel lock, then capture photos for the nameplate, gauge face, tray, and door edge. The app is not a gallery with notes attached afterward. Each photo is taken from inside the checklist so the image inherits context at the moment of capture. The timestamp is bound to the answer step. The slot name is known. The inspection cannot accidentally leave with three indistinguishable files called <code>IMG_0041.jpg</code>.</p>
+          <p>Mandatory fields are enforced at entry time because offline work punishes deferred validation. A blank pressure reading does not linger until sync and then fail three hours later in the office. If a numeric field expects kilopascals, the keypad is numeric. If a checklist requires one of four condition states, the control is a short local selector and not a free-text guess. If the operator marks a leak as present, the app reveals the required follow-up fields immediately: leak location, severity, containment action, and photo proof. That behavior matters because the job has to stay coherent when the operator is moving fast and may be interrupted by radio calls or vehicle movement around the enclosure.</p>
+          <p>The camera path is equally strict. When Saira captures the gauge face, the app writes the full-size image to local storage, creates a lighter preview for the running form, and stores the file hash before returning to the checklist. This is not decorative bookkeeping. The full-size file may upload later on poor bandwidth, and the hash lets the sync worker prove whether the server already has that exact evidence or only a preview. The preview keeps the form responsive on low-memory devices because the interface does not need to decode the full asset repeatedly during review. The operator sees that the slot is filled and moves on.</p>
+          <p>By the time the last door-edge photo is taken, the inspection is functionally complete even though nothing has left the handset. That is the core discipline of the platform. Completion is defined first by local integrity: every required answer present, every expected image attached, every timestamp written, every validation rule satisfied, every action tied to the inspection ID already assigned on device.</p>
+          <div class="support-grid">
+            <aside class="field-note">
+              <h3>On-Device Path Diagram</h3>
+              <figure class="diagram">
+                <svg viewBox="0 0 1060 580" role="img" aria-labelledby="journey-title journey-desc">
+                  <title id="journey-title">Operator journey through the on-device inspection path</title>
+                  <desc id="journey-desc">A diagram of the handset path from checklist open through validation, photo capture, local write, resume, and queued sync state.</desc>
+                  <rect x="320" y="28" width="400" height="504" rx="38" fill="#fdfdfd" stroke="#0b0b0b" stroke-width="3"/>
+                  <rect x="470" y="48" width="100" height="10" rx="4" fill="#b5b5b5"/>
+                  <rect x="346" y="92" width="348" height="54" rx="16" fill="#f0f0f0" stroke="#707070"/>
+                  <rect x="346" y="166" width="348" height="54" rx="16" fill="#ffffff" stroke="#707070"/>
+                  <rect x="346" y="240" width="348" height="70" rx="16" fill="#f0f0f0" stroke="#707070"/>
+                  <rect x="346" y="330" width="348" height="58" rx="16" fill="#ffffff" stroke="#707070"/>
+                  <rect x="346" y="408" width="348" height="74" rx="16" fill="#f0f0f0" stroke="#707070"/>
+                  <path d="M520 146 L520 166 M520 220 L520 240 M520 310 L520 330 M520 388 L520 408" stroke="#1a1a1a" stroke-width="3" stroke-linecap="round"/>
+                  <circle cx="520" cy="146" r="7" fill="#101010"/>
+                  <circle cx="520" cy="220" r="7" fill="#101010"/>
+                  <circle cx="520" cy="310" r="7" fill="#101010"/>
+                  <circle cx="520" cy="388" r="7" fill="#101010"/>
+                  <text x="520" y="125" text-anchor="middle" font-size="24" font-family="IBM Plex Sans" fill="#111111">Open assigned checklist</text>
+                  <text x="520" y="198" text-anchor="middle" font-size="24" font-family="IBM Plex Sans" fill="#111111">Validate required inputs</text>
+                  <text x="520" y="270" text-anchor="middle" font-size="24" font-family="IBM Plex Sans" fill="#111111">Capture photo in slot</text>
+                  <text x="520" y="297" text-anchor="middle" font-size="18" font-family="IBM Plex Sans" fill="#5f5f5f">full image + preview + hash</text>
+                  <text x="520" y="364" text-anchor="middle" font-size="24" font-family="IBM Plex Sans" fill="#111111">Write answer locally</text>
+                  <text x="520" y="438" text-anchor="middle" font-size="24" font-family="IBM Plex Sans" fill="#111111">Resume if interrupted, then mark</text>
+                  <text x="520" y="466" text-anchor="middle" font-size="22" font-family="IBM Plex Sans" fill="#111111">Queued for sync</text>
+                  <path d="M186 130 C270 130 290 130 320 130" fill="none" stroke="#3b3b3b" stroke-width="2.5" stroke-dasharray="8 10"/>
+                  <path d="M172 278 C270 278 290 278 320 278" fill="none" stroke="#3b3b3b" stroke-width="2.5" stroke-dasharray="8 10"/>
+                  <path d="M720 438 C780 438 800 438 830 438" fill="none" stroke="#3b3b3b" stroke-width="2.5" stroke-dasharray="8 10"/>
+                  <text x="44" y="122" font-size="20" font-family="IBM Plex Sans" fill="#111111">Checklist payload</text>
+                  <text x="44" y="148" font-size="16" font-family="IBM Plex Sans" fill="#5f5f5f">already on device</text>
+                  <text x="36" y="270" font-size="20" font-family="IBM Plex Sans" fill="#111111">Camera guardrails</text>
+                  <text x="36" y="296" font-size="16" font-family="IBM Plex Sans" fill="#5f5f5f">no gallery detour</text>
+                  <text x="838" y="430" font-size="20" font-family="IBM Plex Sans" fill="#111111">Queue badge</text>
+                  <text x="838" y="456" font-size="16" font-family="IBM Plex Sans" fill="#5f5f5f">awaiting network</text>
+                  <text x="838" y="476" font-size="16" font-family="IBM Plex Sans" fill="#5f5f5f">and battery window</text>
+                </svg>
+                <figcaption>The operator path stays inside the device boundary: assignment payload already present, required data validated before exit, photo capture bound to checklist slots, and interrupted sessions restored to the exact local state rather than restarted from memory.</figcaption>
+              </figure>
+            </aside>
+            <aside class="code-card">
+              <h3>Representative Local Record</h3>
+              <pre><code>{
+  "local_id": "insp-2026-04-26-0612-044",
+  "checklist_id": "fire-pump-monthly-v3",
+  "asset_id": "YARD-N4-PUMP-02",
+  "status": "ready_to_queue",
+  "captured_at": "2026-04-26T06:17:43+05:30",
+  "answers": {
+    "seal_intact": true,
+    "suction_kpa": 692,
+    "discharge_kpa": 811,
+    "tray_condition": "dry"
+  },
+  "photos": [
+    {"slot": "nameplate", "sha256": "2f0c...91d4"},
+    {"slot": "gauge_face", "sha256": "c176...0bb2"}
+  ],
+  "attempt_count": 0,
+  "server_basis_version": 17
+}</code></pre>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="checkpoint">
+        <div class="badge">03</div>
+        <div class="checkpoint-panel">
+          <h2>Checkpoint 03: Every Answer Lands Locally Before the Operator Moves</h2>
+          <p>What makes the inspection trustworthy is not that a save button exists somewhere on screen. It is that each important action is committed locally as it happens. When Saira enters the discharge pressure, the value is written to the local database immediately. When she attaches the tray photo, the file path, file hash, capture time, and slot name are written beside the inspection row. When she changes a response from <code>minor corrosion</code> to <code>none observed</code>, the latest value becomes current, but the event can still be traced because the app knows the change happened before sync and under the same local inspection identity.</p>
+          <p>This design came out of field interviews where operators described being pulled away mid-form to open a gate, answer a radio call, or move the vehicle. They did not think in terms of sessions. They thought in terms of interruptions. A system that waits for a final submit is brittle under that reality. A system that writes each step, restores the unfinished inspection on reopen, and remembers which checklist item was next has a chance of surviving an actual workday.</p>
+          <p>The local layer therefore has two jobs. First, it preserves business meaning. The database row must be complete enough that if the network never returns that morning, the device still holds the inspection as a coherent operational record. Second, it preserves upload discipline. The sync worker needs a deterministic queue entry with payload references, retry counters, and the last known server basis so it can later decide whether it is sending a new inspection, completing a partial upload, or reconciling against a changed upstream version. That is why local persistence is not an afterthought beneath the interface. It is the system of record until acknowledgment comes back.</p>
+          <p>Photos make the point sharper. The app does not delete the full-size image after it generates a preview. It marks the preview as UI material and the original as evidence. Those states matter when memory and battery are tight. Thumbnail generation is cheap enough to keep scrolling smooth; full-resolution evidence is preserved for eventual upload or later review if the operator is asked to defend a finding. On older phones, that separation reduced memory churn during pilots and cut the number of camera-related crashes that used to erase operator confidence in the tool.</p>
+          <div class="support-grid">
+            <aside class="field-note">
+              <h3>Persistence Rules</h3>
+              <p>The interface only advances after the local write succeeds. If storage is full, the problem is surfaced immediately while the operator is still at the asset. Silent failure is worse than a hard stop because it creates false confidence and missing evidence at the same time.</p>
+            </aside>
+            <aside class="field-note">
+              <h3>Low-Spec Device Lessons</h3>
+              <p>Startup is kept lean by loading one assigned checklist, not an entire media history. Preview images are capped. Background work is postponed when the battery is under policy threshold. Those choices are not optimizations in the abstract; they are the difference between a usable field tool and one that gets abandoned after the second crash.</p>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="checkpoint">
+        <div class="badge">04</div>
+        <div class="checkpoint-panel">
+          <h2>Checkpoint 04: The Queue Carries the Inspection Until Connectivity Returns</h2>
+          <p>Once Saira taps the final confirmation, the inspection does not become “sent.” It becomes queued. That wording is exact. The device creates an outbound job that references the locally complete record, its images, and the last assignment version known when the job started. The queue entry is visible because field staff asked for it during pilots. They wanted to know whether the job was merely saved, already delivered, or stuck waiting behind a weak link. The queue badge therefore becomes part of the operator contract: complete locally now, synchronize later when the handset can do it safely.</p>
+          <p>Connectivity returns forty minutes later near the weighbridge where signal is usually serviceable. Even then, the app does not dump everything blindly onto the link. The worker checks basic preconditions first: enough battery to survive a burst of camera uploads, no user action currently editing the same inspection, and no unresolved storage error from a previous attempt. It then stages the inspection in parts. Text payload first, because structured answers are small and give the server enough context to reserve the inspection identity. Photo manifests next, so the server can say which evidence objects it already has and which still need transfer. Large binaries last, in bounded batches, so a single dropout does not force the entire inspection to start from zero.</p>
+          <p>The retry behavior is equally unsentimental. A failure increments the attempt count, records the reason, and schedules the next window with backoff. A timeout on the third photo does not roll the operator’s work backward into uncertainty. It leaves the queue in a specific state: answers received, photo bundle incomplete, next attempt scheduled. Idempotency keys keep duplicates from turning one inspection into three slightly different server rows. That matters once supervisors begin reviewing issues because duplicate evidence creates its own false alarm and wastes the very time the app is supposed to save.</p>
+          <p>In other words, the queue is not a hidden technical mechanism. It is the part of the product that stands between honest field work and the randomness of radio conditions. Without it, offline capture is just a promise. With it, the inspection can wait, retry, and eventually clear without asking the operator to remember what was already done.</p>
+          <div class="support-grid">
+            <aside class="code-card">
+              <h3>Retry Logic Sketch</h3>
+              <pre><code>fun enqueueForSync(job: SyncJob) {
+  if (!batteryOkay() || userIsEditing(job.localId)) return
+  val result = upload(job)
+  when (result) {
+    ACKED -> markDelivered(job.localId)
+    PARTIAL -> schedule(job.copy(attempts = job.attempts + 1))
+    RETRYABLE_ERROR -> backoff(job.attempts + 1)
+    FATAL_SCHEMA_ERROR -> holdForReview(job.localId)
+  }
+}</code></pre>
+            </aside>
+            <aside class="field-note">
+              <h3>Queue States Used in Practice</h3>
+              <p><code>ready_to_queue</code>, <code>sending_form</code>, <code>sending_media</code>, <code>awaiting_retry</code>, <code>awaiting_review</code>, and <code>acked</code> are more useful to field operations than a vague spinner because each one explains what the device believes happened last.</p>
+            </aside>
+          </div>
+
+          <figure class="diagram">
+            <svg viewBox="0 0 1140 620" role="img" aria-labelledby="braid-title braid-desc">
+              <title id="braid-title">Sync braid diagram for one offline inspection</title>
+              <desc id="braid-desc">Parallel strands show local capture, queued records, connectivity return, merge, and acknowledgment across the lifecycle of one inspection.</desc>
+              <rect x="24" y="24" width="1092" height="572" rx="28" fill="#fcfcfc" stroke="#adadad"/>
+              <rect x="80" y="88" width="170" height="442" rx="24" fill="#f3f3f3" stroke="#d1d1d1"/>
+              <rect x="270" y="88" width="170" height="442" rx="24" fill="#fafafa" stroke="#d1d1d1"/>
+              <rect x="460" y="88" width="170" height="442" rx="24" fill="#f3f3f3" stroke="#d1d1d1"/>
+              <rect x="650" y="88" width="170" height="442" rx="24" fill="#fafafa" stroke="#d1d1d1"/>
+              <rect x="840" y="88" width="216" height="442" rx="24" fill="#f3f3f3" stroke="#d1d1d1"/>
+              <text x="165" y="66" text-anchor="middle" font-size="22" font-family="IBM Plex Sans" fill="#111111">Local capture</text>
+              <text x="355" y="66" text-anchor="middle" font-size="22" font-family="IBM Plex Sans" fill="#111111">Queued records</text>
+              <text x="545" y="66" text-anchor="middle" font-size="22" font-family="IBM Plex Sans" fill="#111111">Connectivity returns</text>
+              <text x="735" y="66" text-anchor="middle" font-size="22" font-family="IBM Plex Sans" fill="#111111">Merge and commit</text>
+              <text x="948" y="66" text-anchor="middle" font-size="22" font-family="IBM Plex Sans" fill="#111111">Acknowledgment</text>
+
+              <text x="66" y="152" font-size="19" font-family="IBM Plex Sans" fill="#111111">Form answers</text>
+              <text x="66" y="238" font-size="19" font-family="IBM Plex Sans" fill="#111111">Photo bundle</text>
+              <text x="66" y="324" font-size="19" font-family="IBM Plex Sans" fill="#111111">Sync worker</text>
+              <text x="66" y="410" font-size="19" font-family="IBM Plex Sans" fill="#111111">Server ledger</text>
+              <text x="66" y="496" font-size="19" font-family="IBM Plex Sans" fill="#111111">Ack channel</text>
+
+              <path d="M110 142 C225 142 275 142 320 142 C390 142 438 190 508 190 C570 190 620 140 690 140 C770 140 806 168 886 168 C952 168 998 150 1040 150" fill="none" stroke="#050505" stroke-width="6" stroke-linecap="round"/>
+              <path d="M110 228 C224 228 270 228 332 244 C392 260 450 300 516 300 C580 300 632 246 700 246 C770 246 826 226 902 226 C972 226 1010 208 1040 208" fill="none" stroke="#404040" stroke-width="5" stroke-linecap="round" stroke-dasharray="12 10"/>
+              <path d="M110 314 C210 314 268 314 334 334 C402 356 454 406 522 406 C592 406 630 332 708 332 C776 332 836 348 906 348 C974 348 1008 332 1040 332" fill="none" stroke="#7a7a7a" stroke-width="5" stroke-linecap="round"/>
+              <path d="M110 400 C218 400 266 400 332 390 C392 382 448 352 516 352 C584 352 640 420 712 420 C786 420 824 426 904 426 C978 426 1006 430 1040 430" fill="none" stroke="#191919" stroke-width="3.5" stroke-linecap="round"/>
+              <path d="M110 486 C232 486 280 486 346 470 C410 454 454 246 518 246 C582 246 642 486 714 486 C794 486 826 486 904 486 C980 486 1012 486 1040 486" fill="none" stroke="#555555" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="4 12"/>
+
+              <circle cx="150" cy="142" r="10" fill="#050505"/>
+              <circle cx="358" cy="142" r="10" fill="#050505"/>
+              <circle cx="544" cy="182" r="10" fill="#050505"/>
+              <circle cx="730" cy="144" r="10" fill="#050505"/>
+              <circle cx="1008" cy="152" r="10" fill="#050505"/>
+
+              <circle cx="150" cy="228" r="9" fill="#404040"/>
+              <circle cx="368" cy="248" r="9" fill="#404040"/>
+              <circle cx="544" cy="300" r="9" fill="#404040"/>
+              <circle cx="736" cy="238" r="9" fill="#404040"/>
+              <circle cx="1010" cy="212" r="9" fill="#404040"/>
+
+              <circle cx="150" cy="314" r="8" fill="#7a7a7a"/>
+              <circle cx="372" cy="344" r="8" fill="#7a7a7a"/>
+              <circle cx="548" cy="406" r="8" fill="#7a7a7a"/>
+              <circle cx="736" cy="338" r="8" fill="#7a7a7a"/>
+              <circle cx="1010" cy="332" r="8" fill="#7a7a7a"/>
+
+              <text x="104" y="548" font-size="17" font-family="IBM Plex Sans" fill="#5b5b5b">Solid strand: validated form state</text>
+              <text x="430" y="548" font-size="17" font-family="IBM Plex Sans" fill="#5b5b5b">Dashed strand: media transfer</text>
+              <text x="708" y="548" font-size="17" font-family="IBM Plex Sans" fill="#5b5b5b">Dotted strand: acknowledgment and retry state</text>
+            </svg>
+            <figcaption>The braid shows why synchronization is not one line. Form answers, photo evidence, worker state, server commit, and acknowledgment move in parallel. They meet only when the server can confirm that the inspection and its evidence bundle were both accepted against the expected basis version.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="checkpoint">
+        <div class="badge">05</div>
+        <div class="checkpoint-panel">
+          <h2>Checkpoint 05: Merge Rules Decide What Survives the Return Trip</h2>
+          <p>By the time the device finds stable connectivity, the office may no longer match the world Saira saw at 06:17. A supervisor may have updated asset metadata, reassigned the inspection route, or corrected a reference field after a shift change. This is where a serious offline platform separates capture truth from administrative truth. It does not flatten both into whichever write arrived last. It applies field-aware merge rules.</p>
+          <p>For the north-yard inspection, measured values and photos are treated as field evidence. If Saira recorded suction pressure on site, that reading is not overwritten because someone in the office edited a placeholder note later. On the other hand, centrally managed attributes such as the supervisor roster, maintenance district code, or downstream routing tag may legitimately be newer on the server and should replace stale local copies without implying that the operator entered anything wrong. Signature fields, exceptional safety flags, and checklist version jumps are handled even more carefully. If the incoming record does not line up with the server’s current schema or policy, the system holds it for review instead of guessing.</p>
+          <p>This matters operationally because conflict is not a rare edge case once crews are moving across shifts and coverage gaps. If the system resolves everything with “last write wins,” then the record that survives may be the one with the weaker claim to reality. The platform therefore stores enough basis information in the queue entry to know what the operator saw when capture began and enough audit detail on the server to show what changed during merge. A supervisor opening the inspection later can see that the measurement came from the field, the district tag came from an office correction, and the resolution was applied according to policy instead of clerical accident.</p>
+          <div class="support-grid">
+            <aside class="code-card">
+              <h3>Conflict Resolution Rules</h3>
+              <pre><code>if (field in measuredEvidence || field in photoSlots) deviceValueWins()
+else if (field in centrallyManagedMetadata) serverValueWins()
+else if (schemaChanged(field) || signatureMismatch()) holdForReview()
+else chooseNewestValueAndWriteAuditEntry()</code></pre>
+            </aside>
+            <aside class="field-note">
+              <h3>Supervisor View After Merge</h3>
+              <p>The office does not just receive a final record. It receives provenance: what was captured on device, what was updated centrally, what was retried, and whether any merge rule escalated the inspection for manual review.</p>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="checkpoint">
+        <div class="badge">06</div>
+        <div class="checkpoint-panel">
+          <h2>Checkpoint 06: Recovery Means the Work Survives a Rough Shift</h2>
+          <p>Recovery is where many inspection tools quietly fail. They can demo a clean offline form, but they do not survive what actually happens to field hardware. The phone battery dies while driving between assets. The app is evicted from memory after the camera closes. The operator force-quits because a call came in and the interface looked frozen. In each case, the important question is not whether the app can reopen. It is whether the inspection can resume without re-creating evidence from memory.</p>
+          <p>In this platform, the local record is durable enough that Saira can relaunch after an interruption and land on the exact checkpoint she left: three of four mandatory photos attached, discharge pressure already stored, leak branch unopened because no leak was marked. Temporary camera artifacts are promoted to evidence files as part of capture, not at final submit, so a restart does not strand the only usable image in a transient cache. The queue survives process death because it is data, not in-memory hope. If sync had already sent the form payload but not the final images, the next worker pass continues from the known state rather than rebuilding the job blind.</p>
+          <p>Battery and startup optimizations from field pilots are woven through this behavior. The app avoids loading old media unnecessarily on launch. It only restores the current inspection state and the small previews needed to show progress. Sync work yields when battery policy says the handset may not survive a burst upload. None of this is glamorous, but it is exactly what operators notice. They trust the tool when it reopens quickly, shows the last real state, and never asks them to repeat a task they already completed at the fence line.</p>
+          <p>That trust is not sentimental. Repeating work in the field has a cost: time on site, extra vehicle movement, repeated exposure to equipment areas, and arguments later about why one timestamp is an hour newer than the rest. A recovery path that preserves the original record prevents those downstream distortions.</p>
+        </div>
+      </section>
+
+      <section class="checkpoint">
+        <div class="badge">07</div>
+        <div class="checkpoint-panel">
+          <h2>Checkpoint 07: Reconciliation Ends With an Acknowledgment, Not a Guess</h2>
+          <p>Eventually the server has everything it needs: the checklist answers, the expected set of photos, the basis version used for merge, and the derived audit record of what happened during transfer. Only then does the platform mark the inspection as acknowledged and clear it from the active queue. That last transition matters because operators and supervisors have both been burned by systems that implied success too early. A green icon shown after the first POST request is not proof. Acknowledgment has to mean the record and its evidence package are committed, indexable, and visible upstream.</p>
+          <p>For Saira, the result is simple on screen: the queued badge disappears, the inspection shows the server receipt time, and the device can eventually release any evidence files that retention policy allows it to purge. For the supervisor, the result is richer. The office view shows that the inspection began offline at 06:12, that the last required photo landed on device at 06:17, that connectivity returned near 06:58, that one retry occurred during media transfer, and that final acknowledgment was written at 07:03. Those are not cosmetic timestamps. They explain the chain of custody for the inspection.</p>
+          <p>When a reading is challenged later, the audit trail can answer concrete questions. Did the operator actually capture the gauge before the maintenance team arrived? Yes, because the photo and numeric entry share the early local timeline. Was the missing signal the reason the office did not see the inspection immediately? Yes, and the queue history proves it. Was any field overwritten during merge? If so, which one, by which rule, and against which previous value? That is the level of detail required when inspection data drives compliance, maintenance scheduling, or dispute resolution.</p>
+          <p>The platform earns trust by making those answers routine. Not perfect. Not magical. Routine. A field record is born on a handheld, carried through silence, retried without drama, reconciled with policy, and acknowledged with an audit trail that can stand up after the shift is over.</p>
+          <div class="closing-strip">The final measure of an offline inspection platform is not that it can collect data without bars on the status icon. It is that months later, when someone asks what happened at the asset and when it happened, the system can answer without guessing.</div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer-note">
+      This document is intentionally self-contained: one optional Google Fonts link, inline styles only, no scripts, no external images, and all diagrams rendered with inline SVG in a strict greyscale palette.
+    </footer>
+  </div>
+</body>
+</html>
