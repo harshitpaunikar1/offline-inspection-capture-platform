@@ -12,3 +12,7 @@
 
 - Task summary: Used the next day to keep the momentum going for Offline Inspection Capture Platform. I was still piecing things together, so I focused on trying to map the current manual workflow and list the failure points worth fixing first and wrote down the stuff that looked important. At this stage nothing was fully locked, so I kept a rough list of things that looked useful and ignored the rest for now. I kept imagining how an actual operator would move through the steps so the project would not feel fake.
 - Deliverable: I wrapped up the day with current-state workflow mostly in place. It was not perfect, but it was good enough to keep the project moving. I also left myself a few rough reminders for the next day so I would not have to rediscover the same context again.
+## 2024-03-01 - Day 3: Scope pass
+
+- Task summary: By this point I had the rough direction, so the work became more practical. I spent most of the day trying to choose a realistic first version with only the core use cases and make the whole thing feel less half baked. By now I had enough structure to keep going without staring at the screen too long, which honestly helped a lot. This kind of project only works if the logic feels practical, so I spent time checking the flow again and again.
+- Deliverable: I wrapped up the day with version 1 scope mostly in place. It was not perfect, but it was good enough to keep the project moving. There were still a couple of loose parts, but nothing serious enough to block the next step.
