@@ -24,3 +24,7 @@
 
 - Task summary: Got stuck mid-afternoon and had to regroup — re-ran the plots with better axis labels and a more readable color palette.
 - Deliverable: Minor but worth doing.
+## 2024-03-04 - Day 4: User stories
+
+- Task summary: Quick follow-up: fixed a type coercion issue that was causing silent NaN propagation downstream.
+- Deliverable: Nothing dramatic — just keeping things tidy.
