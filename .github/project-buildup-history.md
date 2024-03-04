@@ -16,3 +16,7 @@
 
 - Task summary: By this point I had the rough direction, so the work became more practical. I spent most of the day trying to choose a realistic first version with only the core use cases and make the whole thing feel less half baked. By now I had enough structure to keep going without staring at the screen too long, which honestly helped a lot. This kind of project only works if the logic feels practical, so I spent time checking the flow again and again.
 - Deliverable: I wrapped up the day with version 1 scope mostly in place. It was not perfect, but it was good enough to keep the project moving. There were still a couple of loose parts, but nothing serious enough to block the next step.
+## 2024-03-04 - Day 4: User stories
+
+- Task summary: By this point I had the rough direction, so the work became more practical. I spent most of the day trying to write plain user stories for operators, managers, or admins and make the whole thing feel less half baked. Once the base made some sense, I could finally move a bit faster and stop second guessing every tiny decision. A lot of the work here was really about workflow thinking, not just screens or files.
+- Deliverable: I wrapped up the day with user story list mostly in place. It was not perfect, but it was good enough to keep the project moving. It was not super polished, just stable enough that I felt okay moving forward.
