@@ -28,3 +28,7 @@
 
 - Task summary: Quick follow-up: fixed a type coercion issue that was causing silent NaN propagation downstream.
 - Deliverable: Nothing dramatic — just keeping things tidy.
+## 2024-03-05 - Day 5: Data model
+
+- Task summary: By this point I had the rough direction, so the work became more practical. I spent most of the day trying to list the entities, statuses, and fields the system needs to track and make the whole thing feel less half baked. The middle part always takes longer than it should, mostly becuase one fix usually reveals two more things to clean up. I kept imagining how an actual operator would move through the steps so the project would not feel fake.
+- Deliverable: I wrapped up the day with data model draft mostly in place. It was not perfect, but it was good enough to keep the project moving. I also left myself a few rough reminders for the next day so I would not have to rediscover the same context again.
