@@ -40,3 +40,7 @@
 
 - Task summary: Quick follow-up: went back and reorganized the config section so values are not buried mid-script.
 - Deliverable: Nothing dramatic — just keeping things tidy.
+## 2024-03-06 - Day 6: Architecture
+
+- Task summary: One more pass: went back and reorganized the config section so values are not buried mid-script.
+- Deliverable: Cleaner than this morning's version.
