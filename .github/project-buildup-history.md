@@ -56,3 +56,7 @@
 
 - Task summary: Late-night fix: cleaned up the cell ordering in the notebook so it reads top to bottom without jumping around.
 - Deliverable: Good enough to not be embarrassing.
+## 2024-03-08 - Day 8: Core interaction
+
+- Task summary: This was the middle stretch where the project started feeling real. I kept going and tried to implement the key interaction logic so the main scenario makes sense end to end, then cleaned up whatever looked confusing or weak from the earlier days. The middle part always takes longer than it should, mostly becuase one fix usually reveals two more things to clean up. I kept imagining how an actual operator would move through the steps so the project would not feel fake.
+- Deliverable: Ended the day with working core flow in hand, plus a few side notes on what still needed fixing later. I also left myself a few rough reminders for the next day so I would not have to rediscover the same context again.
