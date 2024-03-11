@@ -64,3 +64,7 @@
 
 - Task summary: Noticed something off from this morning — went back and reorganized the config section so values are not buried mid-script.
 - Deliverable: One of those satisfying small wins.
+## 2024-03-11 - Day 9: Operational rules
+
+- Task summary: Closer to the end, I was mostly tightening things up instead of inventing new scope. The job for the day was to add validation, business rules, and edge cases from the workflow map so the final result looked a bit more complete. By now I had enough structure to keep going without staring at the screen too long, which honestly helped a lot. This kind of project only works if the logic feels practical, so I spent time checking the flow again and again.
+- Deliverable: Ended the day with rules and constraints in hand, plus a few side notes on what still needed fixing later. There were still a couple of loose parts, but nothing serious enough to block the next step.
