@@ -72,3 +72,7 @@
 
 - Task summary: Circled back: added inline comments in the dense sections — would have been confusing to revisit without them.
 - Deliverable: Solid now, moving on.
+## 2024-03-12 - Day 10: Artifacts
+
+- Task summary: Closer to the end, I was mostly tightening things up instead of inventing new scope. The job for the day was to create diagrams, screenshots, or examples that explain the system quickly so the final result looked a bit more complete. I was not trying to add anything fancy here, just making sure the thing looked complete enough to show someone. A lot of the work here was really about workflow thinking, not just screens or files.
+- Deliverable: Ended the day with support artifacts in hand, plus a few side notes on what still needed fixing later. It was not super polished, just stable enough that I felt okay moving forward.
