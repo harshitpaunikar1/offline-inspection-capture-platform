@@ -80,3 +80,7 @@
 
 - Task summary: Circled back: ran the whole thing end to end again after a fresh look. Caught a stale import that broke the flow.
 - Deliverable: Should've caught it earlier but better now than later.
+## 2024-03-13 - Day 11: Documentation check
+
+- Task summary: Closer to the end, I was mostly tightening things up instead of inventing new scope. The job for the day was to write the README with problem, scope, workflow, and usage notes so the final result looked a bit more complete. Most of the heavy lifting was already done, so this part was more about making the rough edges less obvious. I kept imagining how an actual operator would move through the steps so the project would not feel fake.
+- Deliverable: Ended the day with documented project in hand, plus a few side notes on what still needed fixing later. I also left myself a few rough reminders for the next day so I would not have to rediscover the same context again.
