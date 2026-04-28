@@ -22,12 +22,12 @@
 - Deliverable: I wrapped up the day with user story list mostly in place. It was not perfect, but it was good enough to keep the project moving. It was not super polished, just stable enough that I felt okay moving forward.
 ## 2024-03-04 - Day 4: User stories
 
-- Task summary: Got stuck mid-afternoon and had to regroup — re-ran the plots with better axis labels and a more readable color palette.
+- Task summary: Got stuck mid-afternoon and had to regroup - re-ran the plots with better axis labels and a more readable color palette.
 - Deliverable: Minor but worth doing.
 ## 2024-03-04 - Day 4: User stories
 
 - Task summary: Quick follow-up: fixed a type coercion issue that was causing silent NaN propagation downstream.
-- Deliverable: Nothing dramatic — just keeping things tidy.
+- Deliverable: Nothing dramatic - just keeping things tidy.
 ## 2024-03-05 - Day 5: Data model
 
 - Task summary: By this point I had the rough direction, so the work became more practical. I spent most of the day trying to list the entities, statuses, and fields the system needs to track and make the whole thing feel less half baked. The middle part always takes longer than it should, mostly becuase one fix usually reveals two more things to clean up. I kept imagining how an actual operator would move through the steps so the project would not feel fake.
@@ -39,7 +39,7 @@
 ## 2024-03-06 - Day 6: Architecture
 
 - Task summary: Quick follow-up: went back and reorganized the config section so values are not buried mid-script.
-- Deliverable: Nothing dramatic — just keeping things tidy.
+- Deliverable: Nothing dramatic - just keeping things tidy.
 ## 2024-03-06 - Day 6: Architecture
 
 - Task summary: One more pass: went back and reorganized the config section so values are not buried mid-script.
@@ -62,7 +62,7 @@
 - Deliverable: Ended the day with working core flow in hand, plus a few side notes on what still needed fixing later. I also left myself a few rough reminders for the next day so I would not have to rediscover the same context again.
 ## 2024-03-08 - Day 8: Core interaction
 
-- Task summary: Noticed something off from this morning — went back and reorganized the config section so values are not buried mid-script.
+- Task summary: Noticed something off from this morning - went back and reorganized the config section so values are not buried mid-script.
 - Deliverable: One of those satisfying small wins.
 ## 2024-03-11 - Day 9: Operational rules
 
@@ -70,7 +70,7 @@
 - Deliverable: Ended the day with rules and constraints in hand, plus a few side notes on what still needed fixing later. There were still a couple of loose parts, but nothing serious enough to block the next step.
 ## 2024-03-11 - Day 9: Operational rules
 
-- Task summary: Circled back: added inline comments in the dense sections — would have been confusing to revisit without them.
+- Task summary: Circled back: added inline comments in the dense sections - would have been confusing to revisit without them.
 - Deliverable: Solid now, moving on.
 ## 2024-03-12 - Day 10: Artifacts
 
@@ -86,7 +86,7 @@
 - Deliverable: Ended the day with documented project in hand, plus a few side notes on what still needed fixing later. I also left myself a few rough reminders for the next day so I would not have to rediscover the same context again.
 ## 2024-03-13 - Day 11: Documentation check
 
-- Task summary: Ended up revisiting this in the evening — spent time just reading back through everything to make sure it still made sense end to end.
+- Task summary: Ended up revisiting this in the evening - spent time just reading back through everything to make sure it still made sense end to end.
 - Deliverable: Solid now, moving on.
 ## 2024-03-14 - Day 12: Polish wrap
 
